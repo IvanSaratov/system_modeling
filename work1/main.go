@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"math"
 	"os"
 
 	"github.com/wcharczuk/go-chart/v2"
@@ -13,13 +12,20 @@ func main() {
 	C := 10.0  // Емкость
 	R := 100.0 // Споротивление
 	e := 100.0 // ЭДС источника
+	U := 0.0   // Начальное значение
+	dt := 0.1  // Шаг
 
 	var time []float64   // Массив со временем результатов
 	var result []float64 // Массив с результатами
 
 	// С начального времени до 10, шаг 0.1
-	for t := 0.0; t <= 10.0; t += 0.1 {
-		U := e * (1 - math.Exp(-t/(R*C))) // Формула
+	for t := 0.0; t <= 10.0; t += dt {
+		k1 := dt * ((e - U) / (R * C))
+		k2 := dt * ((e - (U + k1/2)) / (R * C))
+		k3 := dt * ((e - (U + k2/2)) / (R * C))
+		k4 := dt * ((e - (U + k3)) / (R * C))
+
+		U += (k1 + 2*k2 + 2*k3 + k4) / 6 // Решение методом Рунге-Кутты
 
 		time = append(time, t)
 		result = append(result, U)
