@@ -7,21 +7,28 @@ import (
 	"github.com/wcharczuk/go-chart/v2"
 )
 
+func dUdt(e, U, R, C float64) float64 {
+	return (e - U) / (R * C)
+}
+
 func main() {
 
-	C := 10.0  // Емкость
-	R := 100.0 // Споротивление
-	e := 100.0 // ЭДС источника
-	U := 0.0   // Начальное значение
-	dt := 0.01 // Шаг
+	C := 10.0       // Емкость
+	R := 100.0      // Споротивление
+	e := 100.0      // ЭДС источника
+	U := 0.0        // Начальное значение
+	dt := 100.0     // Шаг
+	tmax := 10000.0 // Максимальное время
 
 	var time []float64   // Массив со временем результатов
 	var result []float64 // Массив с результатами
 
-	for t := dt; t < 10.0; t += dt {
-		U = U + dt*((e-U)/(R*C))
+	for t := dt; t <= tmax; t += dt {
+		tmp := U + dt*dUdt(e, U, R, C)
 		time = append(time, t)
-		result = append(result, U)
+		result = append(result, tmp)
+
+		U = tmp
 	}
 
 	for i := 0; i < len(time); i++ { // Вывод данных на экран
